@@ -7,7 +7,7 @@ class User(AbstractUser):
     email=models.EmailField(unique=True )
     
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = 'username'
+    REQUIRED_FIELDS = ['username']
     
     def __str__(self):
         return self.username
@@ -25,7 +25,16 @@ class Profile(models.Model):
         return self.full_name
     
 
+def create_user_Progile(sender,instance ,created ,**kwargs):
+    if created:
+        Profile.objects.create(user=instance)
 
+
+def save_user_profile(sender,instance,**kwargs):
+    instance.profile.save()
+    
+post_save.connect(create_user_Progile,sender=User)
+post_save.connect(save_user_profile,sender=User)
 
     
         
